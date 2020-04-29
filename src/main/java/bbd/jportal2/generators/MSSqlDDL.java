@@ -309,22 +309,13 @@ public class MSSqlDDL extends BaseGenerator implements IBuiltInSIProcessor
         outData.println("GO");
         outData.println();
         outData.println("CREATE TRIGGER " + tableName + "InsertTrigger ON " + tableName + " FOR INSERT AS");
-        for (int i = 0; i < table.fields.size(); i++)
-        {
-          Field field = (Field) table.fields.elementAt(i);
-          if (field.type == Field.SEQUENCE)
-          {
-            outData.println("UPDATE " + tableName + " SET " + field.name + "=" + field.name + "+0");
-            outData.println("WHERE " + field.name + "=(SELECT MAX(" + field.name + ") FROM " + tableName + ")");
-          }
-        }
         outData.println("UPDATE " + tableName);
         outData.println("SET");
         comma = "  ";
         for (int i = 0; i < table.fields.size(); i++)
         {
           Field field = (Field) table.fields.elementAt(i);
-          if (field.type == Field.SEQUENCE)
+          if (field.type == Field.SEQUENCE || field.type == Field.BIGSEQUENCE)
           {
             outData.println(comma + field.name + " = (SELECT MAX(" + field.name + ") FROM " + tableName + ")+1");
             comma = ", ";
